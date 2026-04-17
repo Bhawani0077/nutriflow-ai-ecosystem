@@ -3,13 +3,25 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: AI Smart Diet & Fitness Assistant API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: users
+    description: User profile management
+  - name: diet
+    description: Diet plan operations
+  - name: workout
+    description: Workout plan operations
+  - name: food
+    description: Food analysis and nearby recommendations
+  - name: tracking
+    description: Daily tracking and compliance
+  - name: dashboard
+    description: Dashboard summary data
 paths:
   /healthz:
     get:
@@ -24,6 +36,402 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /users:
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Create or update user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserBody"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get user profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update user profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserBody"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /diet/generate:
+    post:
+      operationId: generateDietPlan
+      tags: [diet]
+      summary: Generate personalized diet plan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GeneratePlanBody"
+      responses:
+        "200":
+          description: Generated diet plan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DietPlan"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /diet/plans/{userId}:
+    get:
+      operationId: getDietPlans
+      tags: [diet]
+      summary: Get diet plans for user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 7
+      responses:
+        "200":
+          description: List of diet plans
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DietPlan"
+
+  /diet/plans/{userId}/today:
+    get:
+      operationId: getTodayDietPlan
+      tags: [diet]
+      summary: Get today's diet plan
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Today's diet plan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DietPlan"
+        "404":
+          description: No plan for today
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /workout/generate:
+    post:
+      operationId: generateWorkoutPlan
+      tags: [workout]
+      summary: Generate personalized workout plan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GeneratePlanBody"
+      responses:
+        "200":
+          description: Generated workout plan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkoutPlan"
+
+  /workout/plans/{userId}:
+    get:
+      operationId: getWorkoutPlans
+      tags: [workout]
+      summary: Get workout plans for user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 7
+      responses:
+        "200":
+          description: List of workout plans
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WorkoutPlan"
+
+  /workout/plans/{userId}/today:
+    get:
+      operationId: getTodayWorkoutPlan
+      tags: [workout]
+      summary: Get today's workout plan
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Today's workout plan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkoutPlan"
+        "404":
+          description: No workout plan for today
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /food/analyze:
+    post:
+      operationId: analyzeFood
+      tags: [food]
+      summary: Analyze food from description/name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyzeFoodBody"
+      responses:
+        "200":
+          description: Food nutrition analysis
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FoodAnalysisResult"
+
+  /food/nearby:
+    get:
+      operationId: getNearbyFood
+      tags: [food]
+      summary: Get nearby food recommendations within budget
+      parameters:
+        - name: budget
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: preference
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [veg, non-veg, any]
+            default: any
+        - name: lat
+          in: query
+          required: false
+          schema:
+            type: number
+        - name: lng
+          in: query
+          required: false
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Nearby food recommendations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NearbyFoodItem"
+
+  /tracking/log:
+    post:
+      operationId: logDailyTracking
+      tags: [tracking]
+      summary: Log daily diet and workout tracking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTrackingLogBody"
+      responses:
+        "201":
+          description: Tracking log created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrackingLog"
+
+  /tracking/{userId}:
+    get:
+      operationId: getUserTracking
+      tags: [tracking]
+      summary: Get tracking logs for user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 14
+      responses:
+        "200":
+          description: Tracking logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrackingLog"
+
+  /tracking/{userId}/today:
+    get:
+      operationId: getTodayTracking
+      tags: [tracking]
+      summary: Get today's tracking log
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Today's tracking
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrackingLog"
+        "404":
+          description: No tracking for today
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /dashboard/{userId}:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get dashboard summary for user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/{userId}/progress:
+    get:
+      operationId: getUserProgress
+      tags: [dashboard]
+      summary: Get user's progress history
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: days
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 30
+      responses:
+        "200":
+          description: Progress data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProgressEntry"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +442,453 @@ components:
       required:
         - status
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        age:
+          type: integer
+        height:
+          type: number
+          description: Height in cm
+        weight:
+          type: number
+          description: Weight in kg
+        dietPreference:
+          type: string
+          enum: [veg, non-veg, vegan]
+        activityType:
+          type: string
+          enum: [gym, home, outdoor, sedentary]
+        goal:
+          type: string
+          enum: [weight-loss, weight-gain, maintenance, muscle-gain]
+        goalTimelineWeeks:
+          type: ["integer", "null"]
+        bmr:
+          type: ["number", "null"]
+          description: Basal Metabolic Rate
+        targetCalories:
+          type: ["number", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - age
+        - height
+        - weight
+        - dietPreference
+        - activityType
+        - goal
+        - createdAt
+        - updatedAt
+
+    CreateUserBody:
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+          minimum: 5
+          maximum: 120
+        height:
+          type: number
+          minimum: 50
+          maximum: 300
+        weight:
+          type: number
+          minimum: 20
+          maximum: 500
+        dietPreference:
+          type: string
+          enum: [veg, non-veg, vegan]
+        activityType:
+          type: string
+          enum: [gym, home, outdoor, sedentary]
+        goal:
+          type: string
+          enum: [weight-loss, weight-gain, maintenance, muscle-gain]
+        goalTimelineWeeks:
+          type: ["integer", "null"]
+      required:
+        - name
+        - age
+        - height
+        - weight
+        - dietPreference
+        - activityType
+        - goal
+
+    UpdateUserBody:
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+        height:
+          type: number
+        weight:
+          type: number
+        dietPreference:
+          type: string
+          enum: [veg, non-veg, vegan]
+        activityType:
+          type: string
+          enum: [gym, home, outdoor, sedentary]
+        goal:
+          type: string
+          enum: [weight-loss, weight-gain, maintenance, muscle-gain]
+        goalTimelineWeeks:
+          type: ["integer", "null"]
+
+    Meal:
+      type: object
+      properties:
+        name:
+          type: string
+        time:
+          type: string
+        items:
+          type: array
+          items:
+            type: string
+        calories:
+          type: number
+        protein:
+          type: number
+        carbs:
+          type: number
+        fats:
+          type: number
+        why:
+          type: string
+          description: Explanation of why this meal is recommended
+      required:
+        - name
+        - time
+        - items
+        - calories
+        - protein
+        - carbs
+        - fats
+        - why
+
+    DietPlan:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        day:
+          type: string
+          format: date
+        totalCalories:
+          type: number
+        meals:
+          type: array
+          items:
+            $ref: "#/components/schemas/Meal"
+        notes:
+          type: ["string", "null"]
+          description: Adaptive notes (e.g. 'You skipped protein yesterday')
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - userId
+        - day
+        - totalCalories
+        - meals
+        - createdAt
+
+    Exercise:
+      type: object
+      properties:
+        name:
+          type: string
+        sets:
+          type: ["integer", "null"]
+        reps:
+          type: ["integer", "null"]
+        duration:
+          type: ["string", "null"]
+          description: Duration for cardio exercises
+        muscleGroup:
+          type: string
+        why:
+          type: string
+          description: Explanation of why this exercise
+      required:
+        - name
+        - muscleGroup
+        - why
+
+    WorkoutPlan:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        day:
+          type: string
+          format: date
+        type:
+          type: string
+          enum: [strength, cardio, hiit, rest, flexibility]
+        exercises:
+          type: array
+          items:
+            $ref: "#/components/schemas/Exercise"
+        estimatedDuration:
+          type: integer
+          description: Duration in minutes
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - userId
+        - day
+        - type
+        - exercises
+        - estimatedDuration
+        - createdAt
+
+    GeneratePlanBody:
+      type: object
+      properties:
+        userId:
+          type: integer
+      required:
+        - userId
+
+    AnalyzeFoodBody:
+      type: object
+      properties:
+        foodName:
+          type: string
+          description: Name of the food item
+        quantity:
+          type: string
+          description: Quantity description (e.g. '2 roti', '1 bowl')
+        imageDescription:
+          type: ["string", "null"]
+          description: Optional description of food image
+      required:
+        - foodName
+        - quantity
+
+    FoodAnalysisResult:
+      type: object
+      properties:
+        foodName:
+          type: string
+        calories:
+          type: number
+        protein:
+          type: number
+        carbs:
+          type: number
+        fats:
+          type: number
+        fiber:
+          type: number
+        healthScore:
+          type: number
+          minimum: 0
+          maximum: 10
+        suggestions:
+          type: array
+          items:
+            type: string
+          description: Suggestions to improve the meal
+      required:
+        - foodName
+        - calories
+        - protein
+        - carbs
+        - fats
+        - fiber
+        - healthScore
+        - suggestions
+
+    NearbyFoodItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        shopName:
+          type: string
+        foodName:
+          type: string
+        price:
+          type: number
+        distance:
+          type: string
+        calories:
+          type: number
+        protein:
+          type: number
+        carbs:
+          type: number
+        fats:
+          type: number
+        nutritionScore:
+          type: number
+          description: Nutrition per cost ratio score
+        isVeg:
+          type: boolean
+        category:
+          type: string
+      required:
+        - id
+        - shopName
+        - foodName
+        - price
+        - distance
+        - calories
+        - protein
+        - carbs
+        - fats
+        - nutritionScore
+        - isVeg
+        - category
+
+    CreateTrackingLogBody:
+      type: object
+      properties:
+        userId:
+          type: integer
+        dietPlanId:
+          type: ["integer", "null"]
+        workoutPlanId:
+          type: ["integer", "null"]
+        followedMeals:
+          type: array
+          items:
+            type: string
+          description: List of meal names that were followed
+        followedWorkout:
+          type: boolean
+        weight:
+          type: ["number", "null"]
+          description: Current weight for progress tracking
+        notes:
+          type: ["string", "null"]
+      required:
+        - userId
+        - followedMeals
+        - followedWorkout
+
+    TrackingLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        day:
+          type: string
+          format: date
+        dietPlanId:
+          type: ["integer", "null"]
+        workoutPlanId:
+          type: ["integer", "null"]
+        followedMeals:
+          type: array
+          items:
+            type: string
+        followedWorkout:
+          type: boolean
+        weight:
+          type: ["number", "null"]
+        notes:
+          type: ["string", "null"]
+        dietCompliancePercent:
+          type: number
+          description: Percentage of meals followed
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - userId
+        - day
+        - followedMeals
+        - followedWorkout
+        - dietCompliancePercent
+        - createdAt
+
+    DashboardSummary:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        todayDietPlan:
+          $ref: "#/components/schemas/DietPlan"
+        todayWorkoutPlan:
+          $ref: "#/components/schemas/WorkoutPlan"
+        todayTracking:
+          $ref: "#/components/schemas/TrackingLog"
+        weeklyDietCompliance:
+          type: number
+          description: Average diet compliance % for last 7 days
+        weeklyWorkoutCompliance:
+          type: number
+          description: Percentage of workouts followed last 7 days
+        currentStreak:
+          type: integer
+          description: Days in a row with full compliance
+        totalDaysTracked:
+          type: integer
+        weightTrend:
+          type: ["string", "null"]
+          enum: ["gaining", "losing", "stable", null]
+      required:
+        - user
+        - weeklyDietCompliance
+        - weeklyWorkoutCompliance
+        - currentStreak
+        - totalDaysTracked
+
+    ProgressEntry:
+      type: object
+      properties:
+        day:
+          type: string
+          format: date
+        weight:
+          type: ["number", "null"]
+        dietCompliance:
+          type: number
+        workoutFollowed:
+          type: boolean
+        totalCaloriesPlanned:
+          type: ["number", "null"]
+      required:
+        - day
+        - dietCompliance
+        - workoutFollowed

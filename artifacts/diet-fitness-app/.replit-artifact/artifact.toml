@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "AI Smart Diet & Fitness Assistant"
+version = "1.0.0"
+id = "artifacts/diet-fitness-app"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21567
+
+[services.development]
+run = "pnpm --filter @workspace/diet-fitness-app run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/diet-fitness-app", "run", "build" ]
+publicDir = "artifacts/diet-fitness-app/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21567"
+BASE_PATH = "/"

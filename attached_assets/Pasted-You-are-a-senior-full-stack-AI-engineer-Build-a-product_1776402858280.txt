@@ -1,0 +1,203 @@
+You are a senior full-stack AI engineer. Build a production-ready mobile + backend system for the following application.
+
+# 📱 Project Name:
+
+AI Smart Diet & Fitness Assistant
+
+# 🎯 Objective:
+
+Create a real-time intelligent application that helps users decide:
+
+* What to eat
+* Where to eat (within budget)
+* How healthy their food is (via image analysis)
+* Personalized diet + workout plan
+* Daily adaptive plan updates with explanations (“WHY” logic)
+
+---
+
+# 🧩 CORE FEATURES
+
+## 1. Budget-Based Nearby Food Recommendation
+
+* Input:
+
+  * User budget (e.g. ₹250)
+  * Veg / Non-veg preference
+  * User location (use GPS)
+
+* Process:
+
+  * Fetch nearby restaurants using Google Maps API
+  * Filter menu items within budget
+  * Rank items based on “nutrition per cost”
+
+* Output:
+
+  * Food items list
+  * Shop name
+  * Distance + navigation link
+  * Nutrition (calories, protein, carbs, fats)
+
+---
+
+## 2. AI Food Scanner (Image + Quantity)
+
+* Input:
+
+  * Food image upload
+  * Quantity (manual input like 2 roti, 1 bowl)
+
+* Process:
+
+  * Use computer vision model (TensorFlow / API like Google Vision)
+  * Detect food name
+  * Map to nutrition database
+  * Estimate nutrition based on quantity
+
+* Output:
+
+  * Food name
+  * Calories
+  * Protein / carbs / fats
+  * Health score (0–10)
+
+* Add suggestion engine:
+
+  * Improve meal (e.g. add salad, reduce butter)
+
+---
+
+## 3. Personalized Adaptive Diet + Workout Planner
+
+### Step 1: User Profile
+
+* Age
+* Height
+* Weight
+* Diet preference
+* Activity type (gym/home)
+* Goal (weight gain/loss with timeline)
+
+### Step 2: Plan Generation
+
+* Calculate BMR
+* Adjust calories based on goal
+* Generate:
+
+  * Full day diet plan (breakfast, lunch, dinner, snacks)
+  * Workout plan (sets/reps)
+
+### Step 3: Explainable AI (“WHY”)
+
+Each meal & exercise must include explanation:
+
+* Why this food at this time
+* What benefit it provides
+* Example:
+
+  * “Breakfast carbs → energy after fasting”
+  * “Protein → muscle recovery”
+
+### Step 4: Daily Tracking System
+
+* Ask user what they followed (checkbox system)
+* Store compliance data
+
+### Step 5: Adaptive AI
+
+* Modify next day plan based on:
+
+  * Missed meals
+  * Missed workout
+  * Consistency
+
+* Also explain:
+
+  * “You skipped protein yesterday → added more today”
+
+---
+
+# 🗄️ DATABASE DESIGN (PostgreSQL)
+
+Tables:
+
+* users (id, age, height, weight, preference, goal)
+* diet_plans (user_id, day, meals, calories)
+* workout_plans (user_id, day, exercises)
+* food_items (name, calories, protein, carbs, fats)
+* user_logs (user_id, day, followed_diet, followed_workout)
+* restaurants (name, location, menu, price)
+
+---
+
+# 🔌 BACKEND (Python FastAPI)
+
+Endpoints:
+
+* POST /user/create
+* GET /diet/generate
+* POST /diet/track
+* POST /food/analyze
+* GET /food/nearby
+
+---
+
+# 📱 FRONTEND (React Native)
+
+Screens:
+
+1. Onboarding (user details)
+2. Home dashboard
+3. Diet plan view
+4. Workout plan view
+5. Food scanner (camera upload)
+6. Nearby food map
+7. Daily tracking checklist
+
+---
+
+# 🌍 APIs TO USE
+
+* Google Maps API (location + directions)
+* Nutrition API (Edamam or custom DB)
+* Image recognition API (Google Vision / TensorFlow model)
+
+---
+
+# ⚙️ DEVOPS
+
+* Dockerize backend
+* Use AWS EC2 for hosting
+* Use PostgreSQL (RDS)
+* CI/CD via GitHub Actions or Jenkins
+
+---
+
+# 📊 ADDITIONAL FEATURES
+
+* Progress tracking (weight, consistency)
+* Notifications (meal reminders)
+* “Best food under budget” recommendation
+
+---
+
+# ⚠️ RULES
+
+* System must be real-time working
+* Use clean architecture (MVC or microservices)
+* Code should be modular and scalable
+* Include sample test data
+* Provide API documentation (Swagger)
+
+---
+
+# 🎯 FINAL OUTPUT REQUIRED
+
+* Fully working backend code
+* Mobile frontend code
+* Database schema
+* API integration
+* Deployment steps
+
+Build this as a real-world production-ready application.
